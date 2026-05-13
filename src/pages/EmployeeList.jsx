@@ -44,13 +44,14 @@ const EmployeeList = () => {
     })
 
     return (
-        <div className="container">
+        <main className="container">
             <h1>Current Employees</h1>
 
             <div className="table-controls">
                 <div>
-                    Show{' '}
+                    <label htmlFor="page-size">Show</label>
                     <select
+                        id="page-size"
                         value={table.getState().pagination.pageSize}
                         onChange={(e) => table.setPageSize(Number(e.target.value))}
                     >
@@ -62,8 +63,9 @@ const EmployeeList = () => {
                 </div>
 
                 <div>
-                    Search:{' '}
+                    <label htmlFor="search">Search:</label>
                     <input
+                        id="search"
                         value={globalFilter}
                         onChange={(e) => setGlobalFilter(e.target.value)}
                         placeholder="Search..."
@@ -135,7 +137,7 @@ const EmployeeList = () => {
             </div>
 
             <Link to="/">Home</Link>
-        </div>
+        </main>
     )
 }
 
