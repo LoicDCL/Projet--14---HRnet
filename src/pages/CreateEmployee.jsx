@@ -22,6 +22,9 @@ const initialForm = {
     department: null,
 }
 
+//Ajout Regex suite à soutenance
+const nameRegex = /^[a-zA-ZÀ-ÿ\s\-']+$/
+
 const requiredFields = {
     firstName: 'First Name',
     lastName: 'Last Name',
@@ -37,16 +40,33 @@ const optionalFields = {
     state: 'State',
 }
 
+//Modification getModalConfig pour intégration regex et trimmer
 const getModalConfig = (form) => {
+    if (form.firstName.trim() && !nameRegex.test(form.firstName.trim())) {
+        return {
+            type: 'error',
+            title: 'Caractères non autorisés',
+            message: 'Le prénom ne peut contenir que des lettres, espaces, tirets et apostrophes.',
+        }
+    }
+
+    if (form.lastName.trim() && !nameRegex.test(form.lastName.trim())) {
+        return {
+            type: 'error',
+            title: 'Caractères non autorisés',
+            message: 'Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes.',
+        }
+    }
+
     const missingRequired = Object.entries(requiredFields)
         .filter(([key]) => !form[key])
         .map(([, label]) => label)
 
     if (missingRequired.length > 0) {
         return {
-            type: 'error',
-            title: 'Champs non remplis',
-            message: `Veuillez svp remplir les champs suivants: ${missingRequired.join(', ')}.`,
+        type: 'error',
+        title: 'Champs non remplis',
+        message: `Veuillez SVP remplir les champs suivants: ${missingRequired.join(', ')}.`,
         }
     }
 
@@ -56,16 +76,16 @@ const getModalConfig = (form) => {
 
     if (missingOptional.length > 0) {
         return {
-            type: 'warning',
-            title: 'Profil incomplet',
-            message: `Profil sauvegardé mais les champs suivants sont manquants: ${missingOptional.join(', ')}.`,
+        type: 'warning',
+        title: 'Profil imcomplet',
+        message: `Employé sauvegardé mais les champs suivants sont manquants: ${missingOptional.join(', ')}.`,
         }
     }
 
     return {
         type: 'success',
-        title: 'Profil créer!',
-        message: 'Le profil à été ajouter avec succès.',
+        title: 'Employé crée',
+        message: 'Employé ajouté avec succès.',
     }
 }
 
@@ -79,21 +99,30 @@ const CreateEmployee = () => {
         setForm((prev) => ({ ...prev, [name]: value }))
     }
 
+    //Ajout Vérif trimmer
     const handleSave = () => {
-        const config = getModalConfig(form)
+        const trimmedForm = {
+            ...form,
+            firstName: form.firstName.trim(),
+            lastName: form.lastName.trim(),
+            street: form.street.trim(),
+            city: form.city.trim(),
+            zipCode: form.zipCode.toString().trim(),
+        }
+        const config = getModalConfig(trimmedForm)
         setModalConfig(config)
 
         if (config.type !== 'error') {
             dispatch(addEmployee({
-                firstName:   form.firstName,
-                astName:    form.lastName,
-                dateOfBirth: form.dateOfBirth ? format(form.dateOfBirth, 'MM/dd/yyyy') : '',
-                startDate:   form.startDate   ? format(form.startDate,   'MM/dd/yyyy') : '',
-                street:      form.street,
-                city:        form.city,
-                state:       form.state?.value || '',
-                zipCode:     form.zipCode,
-                department:  form.department?.value || '',
+                firstName:   trimmedForm.firstName,
+                lastName:    trimmedForm.lastName,
+                dateOfBirth: trimmedForm.dateOfBirth ? format(trimmedForm.dateOfBirth, 'MM/dd/yyyy') : '',
+                startDate:   trimmedForm.startDate   ? format(trimmedForm.startDate,   'MM/dd/yyyy') : '',
+                street:      trimmedForm.street,
+                city:        trimmedForm.city,
+                state:       trimmedForm.state?.value || '',
+                zipCode:     trimmedForm.zipCode,
+                department:  trimmedForm.department?.value || '',
             }))
         }
     }

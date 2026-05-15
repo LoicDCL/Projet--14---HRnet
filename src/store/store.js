@@ -8,17 +8,12 @@ const storage = {
   removeItem: (key) => Promise.resolve(localStorage.removeItem(key)),
 }
 
-const persistConfig = {
-  key: 'hrnet',
-  storage,
-}
+const persistConfig = { key: 'hrnet', storage }
 
 const persistedReducer = persistReducer(persistConfig, employeesReducer)
 
 export const store = configureStore({
-  reducer: {
-    employees: persistedReducer,
-  },
+  reducer: { employees: persistedReducer },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

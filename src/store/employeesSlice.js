@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { mockEmployees } from '../data/mockEmployees'
 
 const employeesSlice = createSlice({
     name: 'employees',
     initialState: {
-        list: [],
+        list: mockEmployees,
     },
     reducers: {
         addEmployee: (state, action) => {
